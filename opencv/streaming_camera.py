@@ -6,7 +6,6 @@ cam = cv2.VideoCapture(5)  #default 0 untuk webcam laptop
                             #selain 0 (1), (2) untuk webcam
 
 
-cam = cv2.VideoCapture()
 while True:
     ret, frame = cam.read()
     
