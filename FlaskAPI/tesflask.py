@@ -24,8 +24,8 @@ def postdata():
         res['data'] = str(e)
         return jsonify(res),500 
 
-@app.route("/siswa/daftarbaru", methods=['POST'])
-def insert_siswabaru():
+# @app.route("/siswa/daftarbaru", methods=['POST'])
+# def insert_siswabaru():
     
 
         
