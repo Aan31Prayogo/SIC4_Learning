@@ -10,9 +10,11 @@ app = Flask(__name__)
 
 @app.route("/sensor" , methods = ['POST'])
 def store_sensor():
+    res = {}
     try:
-        #parsing data dari INsomnia / POstman
+        #parsing data dari Insomnia / Postman
         data = request.json
+        print(data)
         temp = data['temp']
         hum = data['hum']
         createdAt = data['createdAt']
@@ -26,9 +28,16 @@ def store_sensor():
            'createdAt' : createdAt
         }
         my_collection.insert_one(data_sensor)
-        return jsonify ({'isSucces' : True})
+        res['isSucces'] = True
+        res['data'] = data_sensor
+        res['message'] = ""
+        return jsonify (res),200
     except Exception as e:
-        return jsonify ({'isSucces' : False})
+        res['isSucces'] = False
+        res['data'] = ""
+        res['message'] = e
+        print(res)
+        return jsonify (res),500
 
 if __name__ == "__main__":
     app.run()
