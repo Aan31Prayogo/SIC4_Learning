@@ -17,7 +17,7 @@ def store_sensor():
         print(data)
         temp = data['temp']
         hum = data['hum']
-        createdAt = data['createdAt']
+        #createdAt = data['createdAt']
         
         db = client['SIC4']
         my_collection = db['MentorAan'] # diganti sesuai nomor kelompok 
@@ -25,7 +25,7 @@ def store_sensor():
         data_sensor = {
            'temp' : temp,
            'hum' : hum,
-           'createdAt' : createdAt
+           'createdAt' : int(time.time())
         }
         my_collection.insert_one(data_sensor)
         res['isSucces'] = True
