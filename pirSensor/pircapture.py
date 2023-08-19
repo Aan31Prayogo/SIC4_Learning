@@ -13,7 +13,7 @@ pir_sensor = 11
 piezo = 7
 
 path = os.getcwd() + "/capture"
-GPIO.setmode(GPIO.BOARD)
+GPIO.setmode(GPIO.BOARD)  #GPIO.setmode(GPIO.BCM) 
 GPIO.setup(piezo,GPIO.OUT)
 GPIO.setup(pir_sensor, GPIO.IN)
 
