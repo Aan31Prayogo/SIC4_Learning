@@ -7,4 +7,4 @@ def send_msg(text):
    results = requests.get(url_req)
    print(results.json())
 
-send_msg("Hello world!")
+send_msg("HEllo SIC4!")

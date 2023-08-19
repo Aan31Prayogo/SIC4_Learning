@@ -6,7 +6,7 @@ import os
 
 TOKEN = '5936063047:AAEegGclhoRYVF2AnKsnWlAn-g0uwgLvT6o'
 chat_id = 672670660   #chat id pengguna
-image_name = os.getcwd() + "/" + "test.jpg"
+image_name = os.getcwd() + "/" + "python_logo.png"
 
 list_chat_id = ["672670660", "5382390963"]
 
