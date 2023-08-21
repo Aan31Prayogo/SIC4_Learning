@@ -27,7 +27,7 @@ def timetout2():
     #print("timeout 2 selesai")
 
 
-start_timetout2()
+#start_timetout2()
 
 while True:
     ret, frame = cam.read()
