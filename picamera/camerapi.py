@@ -95,12 +95,12 @@ if __name__ == '__main__':
     
     start_open_camera() #running dengan menggunakan threading
     
-    while True:
-        if GPIO.input(pir_sensor): #ketika pir aktif   
-            print("[INFO] PIR  terdeteksi")
-            capture_image()
-        else:
-            print("[INFO] PIR tidak terdeteksi")
+    # while True:
+    #     if GPIO.input(pir_sensor): #ketika pir aktif   
+    #         print("[INFO] PIR  terdeteksi")
+    #         capture_image()
+    #     else:
+    #         print("[INFO] PIR tidak terdeteksi")
             
-        time.sleep(2)
+    #     time.sleep(2)
         
