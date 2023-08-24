@@ -17,6 +17,10 @@ GPIO.setmode(GPIO.BOARD)  #GPIO.setmode(GPIO.BCM)
 GPIO.setup(piezo,GPIO.OUT)
 GPIO.setup(pir_sensor, GPIO.IN)
 
+istirahat_1_awal = "09.30" 
+istirahat_1_akhir = "10.00"
+flagIstirahat = False
+
 def start_open_camera():
     t1  = threading.Thread(target=open_camera)
     t1.start()
@@ -83,11 +87,19 @@ if __name__ == '__main__':
     start_open_camera() #running dengan menggunakan threading
     
     while True:
-        if GPIO.input(pir_sensor): #ketika pir aktif   
-            print("[INFO] PIR  terdeteksi")
-            capture_image()
+        jam = datetime.now().strftime("%H:%M")
+        
+        if istirahat_1_awal <= jam <= istirahat_1_akhir:
+            flagIstirahat=True
         else:
-            print("[INFO] PIR tidak terdeteksi")
+            flagIstirahat=False
+
+        if not flagIstirahat:        
+            if GPIO.input(pir_sensor): #ketika pir aktif   
+                print("[INFO] PIR  terdeteksi")
+                capture_image()
+            else:
+                print("[INFO] PIR tidak terdeteksi")
             
         time.sleep(2)
         
