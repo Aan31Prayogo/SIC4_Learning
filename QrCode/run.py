@@ -4,6 +4,7 @@ from pyzbar.pyzbar import decode
 import requests
 from datetime import datetime
 import os
+import sqlite3
 
 cap = cv2.VideoCapture(0)
 face_classifier=cv2.CascadeClassifier(cv2.data.haarcascades+"haarcascade_frontalface_default.xml")
@@ -17,10 +18,27 @@ face_classifier=cv2.CascadeClassifier(cv2.data.haarcascades+"haarcascade_frontal
 # GPIO.setup(LED_MERAH, GPIO.OUT, inital= GPIO.LOW)
 # GPIO.setup(LED_HIJAU, GPIO.OUT, inital= GPIO.LOW)
 
-TELEGRAM_TOKEN = ""
-CHAT_ID_TELEGRAM = ""
+TELEGRAM_TOKEN = "5936063047:AAEegGclhoRYVF2AnKsnWlAn-g0uwgLvT6o"
+CHAT_ID_TELEGRAM = "672670660"
 
 path = os.getcwd() + "/capture"
+DB_NAME = "sawiremah.db"
+
+def dict_factory(cursor, row):
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
+
+con = sqlite3.connect(DB_NAME)  #membuat koneksi python ke Database
+con.row_factory = dict_factory
+print("\n")
+
+if con:
+    print("Sukses konek ke DB")
+else:
+    print("Gagal konek DB")
+
 
 
 def capture_image():
@@ -63,10 +81,11 @@ def send_msg_to_telegram(text):
 def open_camera():
     global frame
     global stopFlag
+    last_qr_data = ""
     
     while True:
         ret, frame = cap.read()
-        frame = cv2.resize(frame,(320,320))
+        frame = cv2.resize(frame,(480,480))
         
         if not ret :
             print("failed to open camera")
@@ -76,14 +95,27 @@ def open_camera():
         gray_image = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         faces = face_classifier.detectMultiScale(gray_image, 1.2, 4)
         for (x, y, w, h) in faces:
-            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 4)
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
            
             qr_raw=decode(frame)
                 
             for detect in qr_raw:
                 (x, y, w, h) = detect.rect
-                cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 4)
+                cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 3)
                 qr_data=detect.data.decode("utf-8")
+                print(qr_data)
+                
+                if qr_data != last_qr_data:
+                    param = {'id' : qr_data}
+                    sql = 'SELECT * FROM DataSiswa WHERE id=:id'
+                    cursor = con.cursor().execute(sql,param)
+                    result = cursor.fetchall()
+                    
+                    nama = result[0]['nama']
+                    txt_msg = "Nama = " + nama 
+                    capture_image() 
+                    send_msg_to_telegram(txt_msg)
+                    
 
 
         cv2.imshow("streaming camera", frame) 
