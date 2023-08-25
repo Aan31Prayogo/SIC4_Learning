@@ -30,16 +30,6 @@ def dict_factory(cursor, row):
         d[col[0]] = row[idx]
     return d
 
-con = sqlite3.connect(DB_NAME)  #membuat koneksi python ke Database
-con.row_factory = dict_factory
-print("\n")
-
-if con:
-    print("Sukses konek ke DB")
-else:
-    print("Gagal konek DB")
-
-
 
 def capture_image():
     global frame
@@ -82,6 +72,16 @@ def open_camera():
     global frame
     global stopFlag
     last_qr_data = ""
+    
+    con = False
+    con = sqlite3.connect(DB_NAME)  #membuat koneksi python ke Database
+    con.row_factory = dict_factory
+    print("\n")
+
+    if con:
+        print("Sukses konek ke DB")
+    else:
+        print("Gagal konek DB")
     
     while True:
         ret, frame = cap.read()
