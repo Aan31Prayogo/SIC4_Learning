@@ -110,6 +110,7 @@ def open_camera():
                     sql = 'SELECT * FROM DataSiswa WHERE id=:id'
                     cursor = con.cursor().execute(sql,param)
                     result = cursor.fetchall()
+                    print(result)
                     
                     nama = result[0]['nama']
                     txt_msg = "Nama = " + nama 
