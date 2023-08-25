@@ -1,6 +1,6 @@
 import cv2
 from pyzbar.pyzbar import decode
-#import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 import requests
 from datetime import datetime
 import os
@@ -11,13 +11,13 @@ cap = cv2.VideoCapture(0)
 face_classifier=cv2.CascadeClassifier(cv2.data.haarcascades+"haarcascade_frontalface_default.xml")
 #face_classifier=cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
 
-# GPIO.setwarnings(False)
-# LED_MERAH = 8
-# LED_HIJAU = 10
+GPIO.setwarnings(False)
+LED_MERAH = 8
+LED_HIJAU = 10
 
-# GPIO.setmode(GPIO.BOARD)
-# GPIO.setup(LED_MERAH, GPIO.OUT, inital= GPIO.LOW)
-# GPIO.setup(LED_HIJAU, GPIO.OUT, inital= GPIO.LOW)
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(LED_MERAH, GPIO.OUT, inital= GPIO.LOW)
+GPIO.setup(LED_HIJAU, GPIO.OUT, inital= GPIO.LOW)
 
 TELEGRAM_TOKEN = "5936063047:AAEegGclhoRYVF2AnKsnWlAn-g0uwgLvT6o"
 CHAT_ID_TELEGRAM = "672670660"
@@ -125,7 +125,15 @@ def open_camera():
                     txt_msg = "Nama = " + nama 
                     capture_image() 
                     start_send_msg_to_telegram(txt_msg)
+                    GPIO.output(LED_HIJAU, GPIO.HIGH)
+                    GPIO.output(LED_MERAH, GPIO.LOW)
                     last_qr_data= qr_data
+                else:
+                    GPIO.output(LED_HIJAU, GPIO.LOW)
+                    GPIO.output(LED_MERAH, GPIO.HIGH)
+                    txt_msg = "Sudah Absen = " + nama 
+                    start_send_msg_to_telegram(txt_msg)
+
 
         cv2.imshow("streaming camera", frame) 
             
