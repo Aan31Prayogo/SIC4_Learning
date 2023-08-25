@@ -62,7 +62,7 @@ def send_image_to_telegram(file_img):
 		print(f'[FAILED] send image to telegram with error = {e}' )
   
 def start_send_msg_to_telegram(text):
-    t1 = threading.Thread(target=send_image_to_telegram, args=(text,))
+    t1 = threading.Thread(target=send_msg_to_telegram, args=(text,))
     t1.start()
     
 def send_msg_to_telegram(text):
