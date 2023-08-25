@@ -5,6 +5,7 @@ import requests
 from datetime import datetime
 import os
 import sqlite3
+import threading
 
 cap = cv2.VideoCapture(0)
 face_classifier=cv2.CascadeClassifier(cv2.data.haarcascades+"haarcascade_frontalface_default.xml")
@@ -38,10 +39,14 @@ def capture_image():
         nama_file = dt_string + ".jpg"
         image = cv2.imwrite(path + "/" + nama_file, frame)    #fungsi untuk menyimpan gambar
         print("sukses simpan gambar denga nama file ", nama_file)
-        send_image_to_telegram(nama_file)
+        start_send_image_to_telegram(nama_file)
     except Exception as e:
         print(f'[FAILED] capture_image= {e}' )
 
+def start_send_image_to_telegram(file_img):
+    t2 = threading.Thread(target=send_image_to_telegram, args=(file_img,))
+    t2.start()
+    
 def send_image_to_telegram(file_img):	
 	try:
 		TOKEN = TELEGRAM_TOKEN  #token bot kelompok
@@ -55,14 +60,18 @@ def send_image_to_telegram(file_img):
 
 	except Exception as e:
 		print(f'[FAILED] send image to telegram with error = {e}' )
-
+  
+def start_send_msg_to_telegram(text):
+    t1 = threading.Thread(target=send_image_to_telegram, args=(text,))
+    t1.start()
+    
 def send_msg_to_telegram(text):
     try:
         token = TELEGRAM_TOKEN
         chat_id = CHAT_ID_TELEGRAM
         url_req = "https://api.telegram.org/bot" + token + "/sendMessage" + "?chat_id=" + chat_id + "&text=" + text 
         results = requests.get(url_req)
-        print(results.json())
+        #print(results.json())
         if int(results.status_code)==200:
             print('succes send msg to telegram')
     except Exception as e:
@@ -103,21 +112,20 @@ def open_camera():
                 (x, y, w, h) = detect.rect
                 cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 3)
                 qr_data=detect.data.decode("utf-8")
-                print(qr_data)
+                #print(qr_data)
                 
                 if qr_data != last_qr_data:
                     param = {'id' : qr_data}
                     sql = 'SELECT * FROM DataSiswa WHERE id=:id'
                     cursor = con.cursor().execute(sql,param)
                     result = cursor.fetchall()
-                    print(result)
+                    #print(result)
                     
                     nama = result[0]['nama']
                     txt_msg = "Nama = " + nama 
                     capture_image() 
-                    send_msg_to_telegram(txt_msg)
-                    
-
+                    start_send_msg_to_telegram(txt_msg)
+                    last_qr_data= qr_data
 
         cv2.imshow("streaming camera", frame) 
             
