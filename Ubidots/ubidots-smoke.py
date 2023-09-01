@@ -5,6 +5,7 @@ import random
 from gpiozero import PWMLED, MCP3008
 from time import sleep
 import requests
+import threading
 #import RPi.GPIO as GPIO
 
 # GPIO.setwarnigs(False)
@@ -13,8 +14,8 @@ import requests
 # GPIO.setmode(GPIO.BOARD)
 # GPIO.setup(PIR, GPIO.INPUT)
 
-TOKEN = ""  # Put your TOKEN here
-DEVICE_LABEL = ""  # Put your device label here 
+TOKEN = "BBFF-tlIEmrC1sfA8R0yqtjZFass1XxaKKi"
+DEVICE_LABEL = "researcher" 
 VARIABLE_LABEL_1 = "smoke detector"  # Put your first variable label here
 # VARIABLE_LABEL_2 = "humidity"  # Put your second variable label here
 # VARIABLE_LABEL_3 = "pir"  # Put your second variable label here
@@ -27,7 +28,7 @@ led = PWMLED(14)
 
 def build_payload(variable_1,value):
     # Creates two random values for sending data
-    variable_1 = value  #temprature
+    #variable_1 = value  #temprature
     # value_2 = random.randint(0, 85) #humidity
     # value_3 = random.randint(0,1)
 
@@ -35,6 +36,14 @@ def build_payload(variable_1,value):
 
     return payload
 
+def start_send_message():
+    t1 = threading.Thread(target= send_message)
+    t1.start()
+
+def send_message():
+    text = "[INFO] Asap Terdeksi"
+    base_url = 'https://api.telegram.org/bot6305275346:AAFqQKR5VVZvQqERVInyTohvnmjAIJkNULE/sendMessage?chat_id=-970317472&text="{}"'.format(text)
+    requests.post(base_url)
 
 def post_request(payload):
     # Creates the headers for the HTTP requests
@@ -74,13 +83,10 @@ def main():
     if valueAsap > 3.000 : #minimal_:
         print("[INFO] Asap dan Gas Terdeteksi")
 
-        #Sending notification to Telegram
-        text = "[INFO] Asap Terdeksi"
-        base_url = 'https://api.telegram.org/bot6305275346:AAFqQKR5VVZvQqERVInyTohvnmjAIJkNULE/sendMessage?chat_id=-970317472&text="{}"'.format(text)
-        requests.get(base_url)
+        start_send_message()
     else:
         print("[INFO] Asap Tidak Ada")
-#    print(valueAsap)
+    print(valueAsap)
 
     payload = build_payload(VARIABLE_LABEL_1, valueAsap)
 
@@ -93,5 +99,5 @@ def main():
 if __name__ == '__main__':
     while (True):
         main()
-        time.sleep(5)
+        time.sleep(3)
         print("\n")
